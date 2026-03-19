@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayudantía: Introducción a Wireshark</title>
+    <style>
+        :root {
+            --primary-color: #005A9C; /* Azul Wireshark */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        .step, .challenge {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .badge-easy { background-color: #28a745; }
+        .badge-medium { background-color: #ffc107; color: #333; }
+        .badge-hard { background-color: #dc3545; }
+        code {
+            background-color: #eee;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #d63384;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #004375;
+        }
+        .solution {
+            display: none;
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Taller Práctico: Análisis de Redes con Wireshark 🦈</h1>
+    <p>Guía de instalación y desafíos prácticos paso a paso</p>
+</header>
+
+<div class="container">
+    <section id="instalacion">
+        <h2>1. Guía de Instalación</h2>
+        <p>Antes de comenzar a capturar tráfico, necesitamos tener la herramienta instalada. Sigue las instrucciones según tu sistema operativo:</p>
+        
+        <div class="step">
+            <h3>🪟 Windows</h3>
+            <ol>
+                <li>Ve a la página oficial <a href="https://www.wireshark.org/download.html" target="_blank">wireshark.org</a> y descarga el instalador de 64-bit.</li>
+                <li>Inicia la instalación y presiona "Siguiente".</li>
+                <li><strong>¡IMPORTANTE!</strong> Cuando te pregunte si deseas instalar <strong>Npcap</strong>, asegúrate de marcar la casilla. Esto es vital para capturar el tráfico de tu tarjeta de red.</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🍎 macOS</h3>
+            <ol>
+                <li>Descarga el archivo <code>.dmg</code> (Intel o Apple Silicon según tu Mac) desde la página oficial.</li>
+                <li>Abre el archivo e instala arrastrando a Aplicaciones.</li>
+                <li><em>Alternativa para desarrolladores:</em> Si usas Homebrew, abre la terminal y ejecuta <code>brew install --cask wireshark</code>.</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>🐧 Linux (Ubuntu/Debian)</h3>
+            <ol>
+                <li>Abre tu terminal.</li>
+                <li>Ejecuta: <code>sudo apt update && sudo apt install wireshark</code></li>
+                <li>Cuando pregunte si los usuarios no-root pueden capturar paquetes, selecciona <strong>Sí</strong> (Yes).</li>
+                <li>Agrega tu usuario al grupo: <code>sudo usermod -aG wireshark $USER</code> y reinicia tu sesión.</li>
+            </ol>
+        </div>
+    </section>
+
+    <section id="desafios">
+        <h2>2. Desafíos de la Ayudantía</h2>
+        <p>Aplica lo aprendido. Ve subiendo de nivel resolviendo estos casos de uso reales.</p>
+
+        <div class="challenge">
+            <span class="badge badge-easy">Nivel 1: Básico</span>
+            <h3>Desafío 1: El "Ping-Pong" (ICMP)</h3>
+            <p><strong>Objetivo:</strong> Aprender a seleccionar la interfaz de red, capturar tráfico y usar filtros simples.</p>
+            <p><strong>Tarea:</strong>
+                <ol>
+                    <li>Abre Wireshark y haz doble clic en tu interfaz activa (la que tiene gráficos moviéndose, como Wi-Fi o Ethernet).</li>
+                    <li>Abre una terminal/consola en tu computador y ejecuta el comando: <code>ping 8.8.8.8</code> (déjalo dar unos 4 saltos y detenlo).</li>
+                    <li>Vuelve a Wireshark y detén la captura (botón cuadrado rojo).</li>
+                    <li>Aplica un filtro para ver solo este tráfico y encuentra la petición y la respuesta.</li>
+                </ol>
+            </p>
+            <button onclick="toggleSolution('sol1')">Ver Pistas / Solución</button>
+            <div id="sol1" class="solution">
+                <strong>Solución:</strong><br>
+                En la barra superior verde de Wireshark, escribe <code>icmp</code> y presiona Enter.<br>
+                Verás paquetes clasificados como <strong>Echo (ping) request</strong> (tú preguntando) y <strong>Echo (ping) reply</strong> (Google respondiendo). Este es el protocolo que verifica si hay conectividad.
+            </div>
+        </div>
+
+        <div class="challenge">
+            <span class="badge badge-medium">Nivel 2: Intermedio</span>
+            <h3>Desafío 2: El Saludo de 3 Vías y "Follow Stream"</h3>
+            <p><strong>Objetivo:</strong> Identificar cómo se inicia una conexión TCP y aislar una única comunicación.</p>
+            <p><strong>Tarea:</strong>
+                <ol>
+                    <li>Inicia una nueva captura en Wireshark (sin guardar la anterior).</li>
+                    <li>Abre tu navegador y entra a un sitio sin cifrar, por ejemplo: <code>http://neverssl.com</code></li>
+                    <li>Detén la captura.</li>
+                    <li>Encuentra el inicio de esa conexión (El saludo de 3 partes: SYN, SYN-ACK, ACK) y aísla esa conversación para ver los mensajes crudos entre tu PC y la web.</li>
+                </ol>
+            </p>
+            <button onclick="toggleSolution('sol2')">Ver Pistas / Solución</button>
+            <div id="sol2" class="solution">
+                <strong>Solución:</strong><br>
+                1. En la barra de filtros escribe <code>http</code> y presiona Enter.<br>
+                2. Busca el paquete que diga "GET / HTTP/1.1", hazle <strong>clic derecho -> Follow -> TCP Stream</strong>.<br>
+                3. Se abrirá una ventana con texto rojo (lo que tú enviaste) y azul (lo que el servidor respondió).<br>
+                4. Cierra la ventana. Verás que el filtro cambió a algo como <code>tcp.stream eq 0</code>. Si miras los 3 primeros paquetes de esa lista, verás el famoso saludo: <strong>[SYN]</strong>, luego <strong>[SYN, ACK]</strong>, y finalmente <strong>[ACK]</strong>.
+            </div>
+        </div>
+
+        <div class="challenge">
+            <span class="badge badge-hard">Nivel 3: Avanzado</span>
+            <h3>Desafío 3: El elefante en la red (Paquetes Cortos vs Largos)</h3>
+            <p><strong>Objetivo:</strong> Comprender la segmentación TCP combinando filtros complejos.</p>
+            <p><strong>Tarea:</strong>
+                <ol>
+                    <li>Inicia una nueva captura.</li>
+                    <li>Busca en Google una imagen grande (o un archivo PDF de varios megas) y descárgala.</li>
+                    <li>Detén la captura.</li>
+                    <li>Encuentra esa descarga utilizando una combinación de filtros de IP y Protocolo. Identifica visualmente por qué es un "TCP largo" (segmentado) en lugar de una petición corta.</li>
+                </ol>
+            </p>
+            <button onclick="toggleSolution('sol3')">Ver Pistas / Solución</button>
+            <div id="sol3" class="solution">
+                <strong>Solución:</strong><br>
+                1. Filtra por tráfico seguro o web: <code>tcp.port == 443 or tcp.port == 80</code>.<br>
+                2. Busca un flujo que tenga mucha densidad de paquetes de un servidor a tu IP.<br>
+                3. Haz <em>Follow TCP Stream</em>. Al cerrar la ventana, notarás cientos de paquetes consecutivos que dicen <code>[TCP segment of a reassembled PDU]</code>.<br>
+                <strong>Explicación:</strong> Los paquetes TCP tienen un tamaño máximo (MTU, usualmente 1500 bytes). Un paquete corto (ej. un ping o un simple "GET") cabe en 1 paquete. Una descarga de 5MB requiere que TCP "corte" el archivo en miles de fragmentos. Wireshark te advierte que ese paquete es solo un trozo de algo más grande.
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    function toggleSolution(id) {
+        var x = document.getElementById(id);
+        if (x.style.display === "none" || x.style.display === "") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>

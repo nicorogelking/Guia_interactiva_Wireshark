@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayudantía: Introducción a Wireshark</title>
+    <title>Ayudantía: Modelo OSI y Análisis con Wireshark</title>
     <style>
         :root {
             --primary-color: #005A9C; /* Azul Wireshark */
             --bg-color: #f4f7f6;
             --text-color: #333;
             --card-bg: #fff;
+            --osi-color: #004b8d;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -36,12 +37,15 @@
             padding-bottom: 0.5rem;
             margin-top: 2rem;
         }
-        .step, .challenge {
+        .step, .challenge, .intro-box {
             background: var(--card-bg);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .intro-box {
+            border-left: 5px solid var(--osi-color);
         }
         .badge {
             display: inline-block;
@@ -55,6 +59,24 @@
         .badge-easy { background-color: #28a745; }
         .badge-medium { background-color: #ffc107; color: #333; }
         .badge-hard { background-color: #dc3545; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: var(--osi-color); color: white; }
+        
+        .diagram { 
+            background: #2d3436; 
+            color: #fab1a0; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.2;
+        }
+        .analogia { font-style: italic; color: #555; background: #eef2f3; padding: 10px; border-radius: 4px; }
+        
         code {
             background-color: #eee;
             padding: 0.2rem 0.4rem;
@@ -72,9 +94,7 @@
             font-size: 1rem;
             margin-top: 1rem;
         }
-        button:hover {
-            background-color: #004375;
-        }
+        button:hover { background-color: #004375; }
         .solution {
             display: none;
             background-color: #e9ecef;
@@ -88,109 +108,158 @@
 <body>
 
 <header>
-    <h1>Taller Práctico: Análisis de Redes con Wireshark 🦈</h1>
-    <p>Guía de instalación y desafíos prácticos paso a paso</p>
+    <h1>Introducción al Modelo OSI y Taller de Wireshark 🦈</h1>
+    <p>Entendiendo la comunicación global: Desde la teoría hasta la práctica</p>
 </header>
 
 <div class="container">
+
+    <!-- SECCIÓN NUEVA: INTRODUCCIÓN E HISTORIA -->
+    <section id="historia">
+        <h2>El Origen de la Comunicación: ¿Por qué OSI?</h2>
+        <div class="intro-box">
+            <p>A finales de los años 70, la computación vivía en una "Torre de Babel". Empresas gigantes como <strong>IBM</strong> y las primeras máquinas de <strong>Mac</strong> tenían un problema crítico: eran sistemas cerrados. Si comprabas una máquina IBM, esta solo podía conectarse a otra IBM usando un cable y protocolo específico de IBM.</p>
+            
+            <p>Esto era un desastre para cualquier empresa que quisiera crecer o mezclar tecnologías. Para solucionar esto, nació el <strong>Modelo OSI (Open Systems Interconnection)</strong>, basado en tres pilares:</p>
+            <ul>
+                <li><strong>Estandarización:</strong> Un lenguaje común para todos.</li>
+                <li><strong>Independencia:</strong> Cada capa hace su trabajo sin molestar a la otra.</li>
+                <li><strong>Dividir y Conquistar:</strong> Fragmentar la complejidad en 7 pasos simples.</li>
+            </ul>
+        </div>
+
+        <p class="analogia">
+            <strong>La Analogía del Océano:</strong> Imagina que el Internet es un océano por el que enviamos un paquete. 
+            <br><br>
+            • <strong>Capas 7 a 5:</strong> Preparan el mensaje (el contenido del paquete y cómo se ve).<br>
+            • <strong>Capa 4:</strong> Es el <strong>guardaespaldas</strong>. Se asegura de que el paquete llegue completo y sin daños al otro lado.<br>
+            • <strong>Capas 3 a 1:</strong> Son el transporte físico (el barco, el motor y las rutas marinas).
+        </p>
+
+        http://googleusercontent.com/image_content/199
+
+
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Capa</th>
+                    <th>Nombre del Dato</th>
+                    <th>Función y Direcciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>7, 6 y 5 (App, Pres, Ses)</td>
+                    <td>Datos</td>
+                    <td>Preparan el contenido, cifrado y diálogo de la aplicación.</td>
+                </tr>
+                <tr>
+                    <td>4. Transporte</td>
+                    <td>Segmento</td>
+                    <td>Asegura la entrega (Guardaespaldas). Usa <strong>Puertos</strong>.</td>
+                </tr>
+                <tr>
+                    <td>3. Red</td>
+                    <td>Paquete</td>
+                    <td>Enrutamiento global. Usa <strong>Direcciones IP</strong>.</td>
+                </tr>
+                <tr>
+                    <td>2. Enlace de Datos</td>
+                    <td>Trama (Frame)</td>
+                    <td>Transferencia local. Usa <strong>Direcciones MAC</strong>.</td>
+                </tr>
+                <tr>
+                    <td>1. Física</td>
+                    <td>Bits</td>
+                    <td>Transmisión física (Cables, Señales).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Diagramas de Conectividad</h3>
+        <p><strong>Capa 2 (Switch):</strong> Conecta computadores en una misma oficina (Red Local).</p>
+        
+        <div class="diagram">
+            [ PC 1 ] ----\          /---- [ PC 3 ]<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ SWITCH ]<br>
+            [ PC 2 ] ----/          \---- [ PC 4 ]<br>
+            (Comunicación por MAC)
+        </div>
+
+        <p><strong>Capa 3 (Router):</strong> Gracias a la IP, el Router une redes distintas para que puedas navegar por Internet.</p>
+        
+        <div class="diagram">
+            [ RED LOCAL A ] <---> [ ROUTER ] <---> [ RED LOCAL B ]<br>
+            (IP: 192.168.1.1)  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (IP: 10.0.0.1)
+        </div>
+    </section>
+
+    <!-- SECCIÓN ORIGINAL: INSTALACIÓN -->
     <section id="instalacion">
-        <h2>1. Guía de Instalación</h2>
-        <p>Antes de comenzar a capturar tráfico, necesitamos tener la herramienta instalada. Sigue las instrucciones según tu sistema operativo:</p>
+        <h2>1. Guía de Instalación de Wireshark</h2>
+        <p>Ahora que entendemos cómo viajan los datos por las capas, usemos Wireshark para "ver" esos paquetes en tiempo real.</p>
         
         <div class="step">
             <h3>🪟 Windows</h3>
             <ol>
-                <li>Ve a la página oficial <a href="https://www.wireshark.org/download.html" target="_blank">wireshark.org</a> y descarga el instalador de 64-bit.</li>
+                <li>Ve a <a href="https://www.wireshark.org/download.html" target="_blank">wireshark.org</a> y descarga el instalador de 64-bit.</li>
                 <li>Inicia la instalación y presiona "Siguiente".</li>
-                <li><strong>¡IMPORTANTE!</strong> Cuando te pregunte si deseas instalar <strong>Npcap</strong>, asegúrate de marcar la casilla. Esto es vital para capturar el tráfico de tu tarjeta de red.</li>
+                <li><strong>¡IMPORTANTE!</strong> Instala <strong>Npcap</strong> cuando se te solicite; es el motor que captura los paquetes.</li>
             </ol>
         </div>
 
         <div class="step">
             <h3>🍎 macOS</h3>
             <ol>
-                <li>Descarga el archivo <code>.dmg</code> (Intel o Apple Silicon según tu Mac) desde la página oficial.</li>
-                <li>Abre el archivo e instala arrastrando a Aplicaciones.</li>
-                <li><em>Alternativa para desarrolladores:</em> Si usas Homebrew, abre la terminal y ejecuta <code>brew install --cask wireshark</code>.</li>
+                <li>Descarga el archivo <code>.dmg</code> desde la página oficial.</li>
+                <li>Instala arrastrando a Aplicaciones.</li>
+                <li>O usa Homebrew: <code>brew install --cask wireshark</code>.</li>
             </ol>
         </div>
 
         <div class="step">
             <h3>🐧 Linux (Ubuntu/Debian)</h3>
             <ol>
-                <li>Abre tu terminal.</li>
-                <li>Ejecuta: <code>sudo apt update && sudo apt install wireshark</code></li>
-                <li>Cuando pregunte si los usuarios no-root pueden capturar paquetes, selecciona <strong>Sí</strong> (Yes).</li>
-                <li>Agrega tu usuario al grupo: <code>sudo usermod -aG wireshark $USER</code> y reinicia tu sesión.</li>
+                <li><code>sudo apt update && sudo apt install wireshark</code></li>
+                <li>Selecciona <strong>Sí</strong> cuando pregunte por permisos de usuario no-root.</li>
+                <li>Ejecuta: <code>sudo usermod -aG wireshark $USER</code> y reinicia sesión.</li>
             </ol>
         </div>
     </section>
 
+    <!-- SECCIÓN ORIGINAL: DESAFÍOS -->
     <section id="desafios">
         <h2>2. Desafíos de la Ayudantía</h2>
-        <p>Aplica lo aprendido. Ve subiendo de nivel resolviendo estos casos de uso reales.</p>
+        <p>Aplica lo aprendido sobre el Modelo OSI resolviendo estos casos reales.</p>
 
         <div class="challenge">
             <span class="badge badge-easy">Nivel 1: Básico</span>
             <h3>Desafío 1: El "Ping-Pong" (ICMP)</h3>
-            <p><strong>Objetivo:</strong> Aprender a seleccionar la interfaz de red, capturar tráfico y usar filtros simples.</p>
-            <p><strong>Tarea:</strong>
-                <ol>
-                    <li>Abre Wireshark y haz doble clic en tu interfaz activa (la que tiene gráficos moviéndose, como Wi-Fi o Ethernet).</li>
-                    <li>Abre una terminal/consola en tu computador y ejecuta el comando: <code>ping 8.8.8.8</code> (déjalo dar unos 4 saltos y detenlo).</li>
-                    <li>Vuelve a Wireshark y detén la captura (botón cuadrado rojo).</li>
-                    <li>Aplica un filtro para ver solo este tráfico y encuentra la petición y la respuesta.</li>
-                </ol>
-            </p>
+            <p><strong>Tarea:</strong> Captura el tráfico de un <code>ping 8.8.8.8</code> y filtra por <code>icmp</code>. Observa cómo se ve una petición de Capa 3.</p>
             <button onclick="toggleSolution('sol1')">Ver Pistas / Solución</button>
             <div id="sol1" class="solution">
-                <strong>Solución:</strong><br>
-                En la barra superior verde de Wireshark, escribe <code>icmp</code> y presiona Enter.<br>
-                Verás paquetes clasificados como <strong>Echo (ping) request</strong> (tú preguntando) y <strong>Echo (ping) reply</strong> (Google respondiendo). Este es el protocolo que verifica si hay conectividad.
+                <strong>Solución:</strong> Filtra por <code>icmp</code>. Verás el <strong>Echo request</strong> y el <strong>Echo reply</strong>.
             </div>
         </div>
 
         <div class="challenge">
             <span class="badge badge-medium">Nivel 2: Intermedio</span>
-            <h3>Desafío 2: El Saludo de 3 Vías y "Follow Stream"</h3>
-            <p><strong>Objetivo:</strong> Identificar cómo se inicia una conexión TCP y aislar una única comunicación.</p>
-            <p><strong>Tarea:</strong>
-                <ol>
-                    <li>Inicia una nueva captura en Wireshark (sin guardar la anterior).</li>
-                    <li>Abre tu navegador y entra a un sitio sin cifrar, por ejemplo: <code>http://neverssl.com</code></li>
-                    <li>Detén la captura.</li>
-                    <li>Encuentra el inicio de esa conexión (El saludo de 3 partes: SYN, SYN-ACK, ACK) y aísla esa conversación para ver los mensajes crudos entre tu PC y la web.</li>
-                </ol>
-            </p>
+            <h3>Desafío 2: El Saludo de 3 Vías (TCP)</h3>
+            <p><strong>Tarea:</strong> Entra a <code>http://neverssl.com</code> y busca el saludo TCP (SYN, SYN-ACK, ACK). Este es el trabajo de la Capa 4.</p>
             <button onclick="toggleSolution('sol2')">Ver Pistas / Solución</button>
             <div id="sol2" class="solution">
-                <strong>Solución:</strong><br>
-                1. En la barra de filtros escribe <code>http</code> y presiona Enter.<br>
-                2. Busca el paquete que diga "GET / HTTP/1.1", hazle <strong>clic derecho -> Follow -> TCP Stream</strong>.<br>
-                3. Se abrirá una ventana con texto rojo (lo que tú enviaste) y azul (lo que el servidor respondió).<br>
-                4. Cierra la ventana. Verás que el filtro cambió a algo como <code>tcp.stream eq 0</code>. Si miras los 3 primeros paquetes de esa lista, verás el famoso saludo: <strong>[SYN]</strong>, luego <strong>[SYN, ACK]</strong>, y finalmente <strong>[ACK]</strong>.
+                <strong>Solución:</strong> Haz clic derecho en un paquete HTTP -> Follow -> TCP Stream. Verás los flags de conexión en los primeros paquetes.
             </div>
         </div>
 
         <div class="challenge">
             <span class="badge badge-hard">Nivel 3: Avanzado</span>
-            <h3>Desafío 3: El elefante en la red (Paquetes Cortos vs Largos)</h3>
-            <p><strong>Objetivo:</strong> Comprender la segmentación TCP combinando filtros complejos.</p>
-            <p><strong>Tarea:</strong>
-                <ol>
-                    <li>Inicia una nueva captura.</li>
-                    <li>Busca en Google una imagen grande (o un archivo PDF de varios megas) y descárgala.</li>
-                    <li>Detén la captura.</li>
-                    <li>Encuentra esa descarga utilizando una combinación de filtros de IP y Protocolo. Identifica visualmente por qué es un "TCP largo" (segmentado) en lugar de una petición corta.</li>
-                </ol>
-            </p>
+            <h3>Desafío 3: Segmentación de Datos</h3>
+            <p><strong>Tarea:</strong> Descarga un archivo pesado y observa cómo el "guardaespaldas" (TCP) fragmenta el archivo en múltiples paquetes para que quepan en la red.</p>
             <button onclick="toggleSolution('sol3')">Ver Pistas / Solución</button>
             <div id="sol3" class="solution">
-                <strong>Solución:</strong><br>
-                1. Filtra por tráfico seguro o web: <code>tcp.port == 443 or tcp.port == 80</code>.<br>
-                2. Busca un flujo que tenga mucha densidad de paquetes de un servidor a tu IP.<br>
-                3. Haz <em>Follow TCP Stream</em>. Al cerrar la ventana, notarás cientos de paquetes consecutivos que dicen <code>[TCP segment of a reassembled PDU]</code>.<br>
-                <strong>Explicación:</strong> Los paquetes TCP tienen un tamaño máximo (MTU, usualmente 1500 bytes). Un paquete corto (ej. un ping o un simple "GET") cabe en 1 paquete. Una descarga de 5MB requiere que TCP "corte" el archivo en miles de fragmentos. Wireshark te advierte que ese paquete es solo un trozo de algo más grande.
+                <strong>Solución:</strong> Verás muchos paquetes seguidos que dicen <code>[TCP segment of a reassembled PDU]</code>.
             </div>
         </div>
     </section>
